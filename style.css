@@ -1,0 +1,24 @@
+:root{
+  color: white;
+}
+
+html, body{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #242424;
+}
+
+#app{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  border: 1px solid white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
+}
