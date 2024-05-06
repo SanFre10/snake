@@ -1,4 +1,4 @@
-let cells = 15;
+let cells = 20;
 
 let applePosition, currentDirection, head, snake, inPause, tickInterval;
 
@@ -15,28 +15,13 @@ function drawGrid() {
 
   for(let i = 0; i < snake.length; i++){
     ctx.fillStyle = i === 0 ? '#c2271f' : '#1bde48';
-    // ctx.fillRect(
-    //   snake[i].x * cellSize,
-    //   snake[i].y * cellSize,
-    //   cellSize,
-    //   cellSize
-    // );
-
-    const posx = snake[i].x * cellSize + cellSize / 2;
-    const posy = snake[i].y * cellSize + cellSize / 2;
-    ctx.beginPath();
-    ctx.arc(posx, posy, cellSize / 1.5, 0, 2 * Math.PI);
-    ctx.fill();
+    ctx.fillRect(
+      snake[i].x * cellSize,
+      snake[i].y * cellSize,
+      cellSize,
+      cellSize
+    );
   }
-
-  // Draw apple cell
-  // ctx.fillStyle = '#f00';
-  // ctx.fillRect(
-  //   applePosition.x * cellSize,
-  //   applePosition.y * cellSize,
-  //   cellSize,
-  //   cellSize
-  // );
 
   const posx = applePosition.x * cellSize + cellSize / 2;
   const posy = applePosition.y * cellSize + cellSize / 2;
@@ -62,16 +47,16 @@ function tick(){
     snake[i].y = snake[i - 1].y;
   }
   if(currentDirection === directions.right){
-    head.x = Math.min(cells - 1, head.x + 1);
+    head.x++;
   }
   else if(currentDirection === directions.left){
-    head.x = Math.max(0, head.x - 1);
+    head.x--;
   }
   else if(currentDirection === directions.up){
-    head.y = Math.max(0, head.y - 1);
+    head.y--;
   }
   else if(currentDirection === directions.down){
-    head.y = Math.min(cells - 1, head.y + 1);
+    head.y++;
   }
 
   if(inApple(head)){
@@ -97,7 +82,25 @@ function reset(){
 
   drawGrid()
 }
+let then = performance.now();
+const fps = 15;   
+function gameLoop(now) {
+  const elapsed = now - then;
+
+  if (elapsed > 1000 / fps) {
+    then = now - (elapsed % (1000 / fps));
+
+    if (!inPause) {
+      tick();
+      drawGrid();
+    }
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
 reset()
+gameLoop()
 
 function inApple({x, y}){
   return x === applePosition.x && y === applePosition.y;
@@ -118,18 +121,9 @@ function inSnake({x, y}, ignoreHead = true){
 
 // Handle arrow key events
 window.addEventListener('keydown', (event) => {
-  if(event.key === ' '){
+  if(event.key === ' ')
     inPause = !inPause;
-    if(inPause){
-      clearInterval(tickInterval);
-    }
-    else{
-      tickInterval = setInterval(() => {
-        tick();
-        drawGrid();
-      }, 1000 / 10); 
-    }
-  }
+  
   if(inPause) return;
 
   if(event.key === 'ArrowRight' && currentDirection !== directions.left){
